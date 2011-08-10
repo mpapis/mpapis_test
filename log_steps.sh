@@ -2,7 +2,10 @@
 
 failing()
 {
+  echo "function failed 1" >&2
   echo "function failed $*"
+  echo "function failed 3" >&2
+  echo "function failed 4"
   false
 }
 
