@@ -1,3 +1,4 @@
+
 require 'yaml'
 
 @c = YAML.load(<<-YAML)
@@ -10,4 +11,4 @@ e:
   b: g
 YAML
 
-puts "#{YAML::ENGINE.yamler}:@c['e']:#{@c['e']}:"
+puts "@c['e']:#{@c['e']}:"
