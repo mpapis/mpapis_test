@@ -3,25 +3,27 @@
 require 'yaml'
 
 def run(bash,command)
-  bash.puts "echo '=====cmd:start=#{command}'"
+  bash.puts "echo '=====cmd:start=#{command}='"
   bash.puts command
-  bash.puts "echo =====cmd:env="
+  bash.puts "echo =====cmd:env=$?="
   bash.puts "env"
-  bash.puts "echo =====cmd:stop=$?="
+  bash.puts "echo =====cmd:stop="
 end
 
 def process(output)
   th=Thread.current
   curr="cmd_#{th['current']}".to_sym
+  output.strip!
 
-  if /^=====cmd:start=(.*)$/ =~ output
-    th[curr]={ :command => $1, :lines => [], :status => nil }
+  if /^=====cmd:start=(.*)=$/ =~ output
+    th[curr]={ :command => $1, :lines => [], :status => nil, :finished => false }
 
-  elsif /^=====cmd:env=$/ =~ output
+  elsif /^=====cmd:env=(.*)=$/ =~ output
+    th[curr][:status]=$1.to_i
     th[curr][:env]=[]
 
-  elsif /^=====cmd:stop=(.*)=$/ =~ output
-    th[curr][:status]=$1.to_i
+  elsif /^=====cmd:stop=$/ =~ output
+    th[curr][:finished]=true
     th['current']+=1
 
   else
@@ -44,9 +46,9 @@ IO.popen('bash', 'w+') { |bash|
     while !bash.eof?
       result = process bash.gets
 
-      unless result[:status].nil?
+      if result[:finished]
         puts "--command: #{result[:command]}"
-        puts result[:lines]*""
+        puts result[:lines]*"\n"
         puts "--returned: #{result[:status]}"
       end
     end
@@ -54,7 +56,8 @@ IO.popen('bash', 'w+') { |bash|
 
   run bash, 'rvm info #status=0'
   run bash, 'export var=2 #status=0'
-  run bash, 'echo "var:$var:" #status'
+  run bash, 'echo "var:$var:" #status=0'
+  run bash, 'false #status=1'
 
   run bash, 'exit'
   treader.join
