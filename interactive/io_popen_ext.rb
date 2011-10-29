@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'yaml'
-
 def run(bash,command)
   bash.puts "echo '=====cmd:start=#{command}='"
   bash.puts command
