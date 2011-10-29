@@ -35,6 +35,12 @@ def process(output)
   th[curr]
 end
 
+def create_command(result)
+  puts "--command: #{result[:command]}"
+  puts result[:lines]*"\n"
+  puts "--returned: #{result[:status]}"
+end
+
 puts "Starting interactive session"
 IO.popen('bash', 'w+') { |bash|
 
@@ -44,11 +50,7 @@ IO.popen('bash', 'w+') { |bash|
     while !bash.eof?
       result = process bash.gets
 
-      if result[:finished]
-        puts "--command: #{result[:command]}"
-        puts result[:lines]*"\n"
-        puts "--returned: #{result[:status]}"
-      end
+      create_command(result) if result[:finished]
     end
   end
 
