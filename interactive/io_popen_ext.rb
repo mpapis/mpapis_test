@@ -14,10 +14,11 @@ def process(output)
   output.strip!
 
   if /^=====cmd:start=(.*)=$/ =~ output
-    th[curr]={ :command => $1, :lines => [], :status => nil, :finished => false }
+    th[curr]={ :command => $1, :lines => [], :status => nil, :finished => false, :started_at => Time.new }
 
   elsif /^=====cmd:env=(.*)=$/ =~ output
     th[curr][:status]=$1.to_i
+    th[curr][:finished_at]=Time.new
     th[curr][:env]=[]
 
   elsif /^=====cmd:stop=$/ =~ output
@@ -39,6 +40,7 @@ def create_command(result)
   puts "--command: #{result[:command]}"
   puts result[:lines]*"\n"
   puts "--returned: #{result[:status]}"
+  puts "--took: #{ ( result[:finished_at]-result[:started_at] )*1000 }ms"
 end
 
 puts "Starting interactive session"
