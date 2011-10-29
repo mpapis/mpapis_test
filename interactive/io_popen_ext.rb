@@ -13,14 +13,13 @@ def process(output)
   curr="cmd_#{th['current']}".to_sym
 
   if /=====cmd:start=(.*)/ =~ output
-    th[curr]={:command => $1}
+    th[curr]={ :command => $1, :lines => [], :status => nil }
 
   elsif /^=====cmd:stop=(.*)=(.*)$/ =~ output
     th[curr][:status]=$1.to_i
     th['current']+=1
 
   else
-    th[curr][:lines]||=[]
     th[curr][:lines]+=[output]
   end
 
