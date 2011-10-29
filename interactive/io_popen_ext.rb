@@ -3,7 +3,7 @@
 require 'yaml'
 
 def run(bash,command)
-  bash.puts "echo \"=====cmd:start=#{command}\""
+  bash.puts "echo '=====cmd:start=#{command}'"
   bash.puts command
   bash.puts "echo =====cmd:env="
   bash.puts "env"
@@ -45,7 +45,9 @@ IO.popen('bash', 'w+') { |bash|
       result = process bash.gets
 
       unless result[:status].nil?
-        y result
+        puts "--command: #{result[:command]}"
+        puts result[:lines]*""
+        puts "--returned: #{result[:status]}"
       end
     end
   end
