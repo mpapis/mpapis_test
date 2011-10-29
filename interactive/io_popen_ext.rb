@@ -5,6 +5,8 @@ require 'yaml'
 def run(bash,command)
   bash.puts "echo =====cmd:start=#{command}"
   bash.puts command
+  bash.puts "echo =====cmd:env=#{command}"
+  bash.puts "env"
   bash.puts "echo =====cmd:stop=$?=#{command}"
 end
 
@@ -15,12 +17,19 @@ def process(output)
   if /=====cmd:start=(.*)/ =~ output
     th[curr]={ :command => $1, :lines => [], :status => nil }
 
+  elsif /=====cmd:env=(.*)/ =~ output
+    th[curr][:env]=[]
+
   elsif /^=====cmd:stop=(.*)=(.*)$/ =~ output
     th[curr][:status]=$1.to_i
     th['current']+=1
 
   else
-    th[curr][:lines]+=[output]
+    if th[curr][:env].nil?
+      th[curr][:lines]+=[output]
+    else
+      th[curr][:env]+=[output]
+    end
   end
 
   th[curr]
@@ -41,9 +50,9 @@ IO.popen('bash', 'w+') { |bash|
     end
   end
 
-  run bash, 'rvm info 1'
-  run bash, 'rvm info 2'
-  run bash, 'rvm info 3'
+  run bash, 'rvm info'
+  run bash, 'export var=2'
+  run bash, 'echo "var:$var:"'
 
   run bash, 'exit'
   treader.join
