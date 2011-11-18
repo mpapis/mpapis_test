@@ -39,6 +39,9 @@ else
 fi
 
 case $1 in
+  (\#!/*)
+    echo shebang ${1#\#!}
+    ;;
   ("$term")
     echo github $1
     ;;
