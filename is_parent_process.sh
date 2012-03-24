@@ -17,6 +17,8 @@ is_parent_of()
       else
         pid=$ppid
       fi
+    else
+      break
     fi
   done
   return 1
