@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-curl -L https://api.github.com/repos/${1:-railsinstaller/railsinstaller-nix}/downloads |
+curl -sS https://api.github.com/repos/${1:-railsinstaller/railsinstaller-nix}/downloads |
 awk -F": |\"|," '
   BEGIN {
     sum=0;
