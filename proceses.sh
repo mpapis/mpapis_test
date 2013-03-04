@@ -15,7 +15,7 @@ filter_existing()
   existing=()
   for id in ${processes[@]}
   do
-    if [[ -d /proc/$id ]]
+    if ps -p $id >/dev/null
     then existing+=( $id )
     fi
   done
