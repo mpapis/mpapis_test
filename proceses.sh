@@ -10,8 +10,6 @@ slow_function()
 
 filter_existing()
 {
-  typeset id
-  typeset -a existing
   existing=()
   for id in ${processes[@]}
   do
@@ -20,26 +18,26 @@ filter_existing()
     fi
   done
   processes=( ${existing[@]} )
-  (( ${#processes[@]} >= $1 )) || return $?
+  (( ${#processes[@]} >= max )) || return $?
 }
 
 wait_if_max()
 {
-  processes+=( $2 )
-  while filter_existing $1
+  processes+=( $1 )
+  while filter_existing
   do sleep 1
   done
 }
 
 in_processes()
 {
-  typeset name
-  typeset -a processes
+  typeset id name max=$1
+  typeset -a processes existing
   processes=()
   for name in a b c d #e f g h i j k l m n
   do
     slow_function $name &
-    wait_if_max $1 $!
+    wait_if_max $!
   done
   wait ${processes[@]}
 }
